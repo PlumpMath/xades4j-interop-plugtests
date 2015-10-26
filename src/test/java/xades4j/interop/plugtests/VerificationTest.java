@@ -26,6 +26,7 @@ import xades4j.XAdES4jException;
 import xades4j.providers.CertificateValidationProvider;
 import xades4j.providers.impl.PKIXCertificateValidationProvider;
 import xades4j.utils.FileSystemDirectoryCertStore;
+import xades4j.utils.XadesProfileResolutionException;
 import xades4j.verification.InvalidSignatureException;
 import xades4j.verification.SignatureSpecificVerificationOptions;
 import xades4j.verification.XAdESForm;
@@ -81,9 +82,7 @@ public class VerificationTest extends TestBase {
     public void test() throws Exception {
 
         VerificationTestCaseRules rules = this.testCase.rules;
-        XadesVerifier verifier = new XadesVerificationProfile(scokCertificateValidator)
-                .acceptUnknownProperties(true) // TS validation data, mostly
-                .newVerifier();
+        XadesVerifier verifier = newVerifier();
         try {
             XAdESVerificationResult res = verifier.verify(
                     getSignatureElement(),
@@ -112,6 +111,12 @@ public class VerificationTest extends TestBase {
         }
 
         ouputVerificationReport(true);
+    }
+
+    public static XadesVerifier newVerifier() throws XadesProfileResolutionException {
+        return new XadesVerificationProfile(scokCertificateValidator)
+                .acceptUnknownProperties(true) // TS validation data, mostly
+                .newVerifier();
     }
 
     private Element getSignatureElement() throws Exception {

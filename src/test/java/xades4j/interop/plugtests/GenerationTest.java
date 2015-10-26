@@ -10,6 +10,7 @@ import xades4j.algorithms.ExclusiveCanonicalXMLWithoutComments;
 import xades4j.production.EnvelopedXmlObject;
 import xades4j.production.XadesBesSigningProfile;
 import xades4j.production.XadesCSigningProfile;
+import xades4j.production.XadesFormatExtenderProfile;
 import xades4j.production.XadesSigningProfile;
 import xades4j.production.XadesTSigningProfile;
 import xades4j.properties.DataObjectDesc;
@@ -43,9 +44,10 @@ public class GenerationTest extends TestBase {
         }
     }
 
-    protected final KeyingDataProvider keyingDataProvider;
+    private final KeyingDataProvider keyingDataProvider;
     protected final SignaturePropertiesProvider noOpSigPropsProvider;
-    protected final AlgorithmsProviderEx algsProvider;
+    private final AlgorithmsProviderEx algsProvider;
+    private final TSAHttpAuthenticationData tsaAuthData;
 
     protected GenerationTest() {
 
@@ -66,6 +68,11 @@ public class GenerationTest extends TestBase {
         };
 
         algsProvider = new AlgsProvider();
+        
+        tsaAuthData = new TSAHttpAuthenticationData(
+                "http://xadessrv.plugtests.net/protected/tsp/TspRequest",
+                "TODO",
+                "TODO");
     }
 
     protected XadesSigningProfile newBes() {
@@ -77,20 +84,21 @@ public class GenerationTest extends TestBase {
         return new XadesTSigningProfile(keyingDataProvider)
                 .withAlgorithmsProviderEx(algsProvider)
                 .withTimeStampTokenProvider(AuthenticatedTimeStampTokenProvider.class)
-                .withBinding(TSAHttpAuthenticationData.class, new TSAHttpAuthenticationData(
-                                "http://xadessrv.plugtests.net/protected/tsp/TspRequest",
-                                "TODO",
-                                "TODO"));
+                .withBinding(TSAHttpAuthenticationData.class, tsaAuthData);
     }
 
     protected XadesSigningProfile newC() {
         return new XadesCSigningProfile(keyingDataProvider, new ValidationDataFromCertValidationProvider(VerificationTest.scokCertificateValidator))
                 .withAlgorithmsProviderEx(algsProvider)
                 .withTimeStampTokenProvider(AuthenticatedTimeStampTokenProvider.class)
-                .withBinding(TSAHttpAuthenticationData.class, new TSAHttpAuthenticationData(
-                                "http://xadessrv.plugtests.net/protected/tsp/TspRequest",
-                                "TODO",
-                                "TODO"));
+                .withBinding(TSAHttpAuthenticationData.class, tsaAuthData);
+    }
+    
+    protected XadesFormatExtenderProfile newExtender(){
+        return new XadesFormatExtenderProfile()
+                .withAlgorithmsProviderEx(algsProvider)
+                .withTimeStampTokenProvider(AuthenticatedTimeStampTokenProvider.class)
+                .withBinding(TSAHttpAuthenticationData.class, tsaAuthData);
     }
 
     protected void outputSignature(Document doc, String testCaseFolder, String testCaseName) throws Exception {

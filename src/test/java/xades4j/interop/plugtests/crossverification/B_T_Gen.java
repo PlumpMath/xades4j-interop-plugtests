@@ -15,6 +15,7 @@ public class B_T_Gen extends GenerationTest {
 
     public static final String TestCaseFolder = "XAdES-B-T.SCOK";
     public static final String TestCase_X_B_T_1 = "X-B-T-1";
+    public static final String TestCase_X_B_T_2 = "X-B-T-2";
 
     @Test
     public void X_B_T_1() throws Exception {

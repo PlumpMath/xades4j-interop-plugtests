@@ -115,7 +115,7 @@ public class B_B_Gen extends GenerationTest {
                 .withSignaturePropertiesProvider(super.noOpSigPropsProvider)
                 .newSigner();
 
-        XadesSigner signer = new XadesBesSigningProfile(super.keyingDataProvider)
+        XadesSigner signer = newBes()
                 .withSignaturePropertiesProvider((SignaturePropertiesCollector spc) -> {
                     spc.setSigningTime(new SigningTimeProperty());
                     spc.setSignatureProductionPlace(new SignatureProductionPlaceProperty("Sophia Antipolis", null));
